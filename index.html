@@ -17,8 +17,84 @@
 <body>
 
     <h1>Welcome to the Homepage!</h1>
+    <select id="my_select" onclick="help()">
+    </select>
+    <select id="locs" onclick="locationDropdown()">
+        <option id="Choose">Choose your State</option>
+    </select>
+
+    <input type="button" value="Generate a table" onclick="createTable()">
+    <input type="button" value="Remove a table" onclick="createTable()">
+
+    <table>
+        <tbody id="parkTable">
+
+        </tbody>
+    </table>
+
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="assets/scripts/load_national_parks_data.js"></script>
+
+    <script>
+                function locationDropdown(){
+                    let select = document.getElementById("locs");
+
+                    for (let i = 0; i < locationsArray.length; i++) {
+                        let option = locationsArray[i];
+                        let optionValue = document.createElement("option");
+                        optionValue.textContent = option;
+                        optionValue.id = option;
+                        select.appendChild(optionValue);
+                    }
+                }
+
+
+
+
+
+    </script>
+
+    <script>
+        function removeTable(){
+            
+        }
+    </script>
+ 
+    <script>
+    function createTable(dropdownSelect) {
+        let body = document.getElementById("parkTable")
+
+        dropdownSelect = document.getElementById("locs");
+        dropdown = dropdownSelect.value;
+        
+        
+
+        
+        for (let i = 0; i < nationalParksArray.length; i++) {
+            let row = document.createElement("tr")
+            let park = nationalParksArray[i];
+
+            if (park.State === dropdown) {
+                for (var key in park) {
+                var value = park[key]
+
+                let cell = document.createElement("td");
+                let cellText = document.createTextNode(value)
+
+                cell.appendChild(cellText);
+                row.appendChild(cell);
+
+            }
+
+            }
+
+            body.appendChild(row);
+
+        }
+    } 
+
+    </script>
 </body>
 </html>
