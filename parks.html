@@ -15,20 +15,25 @@
 
 </head>
 <body>
+    <select id="types" >
+        <option id="Choose">Choose type of Park</option>
 
-    
-    <select id="types">
-        <option id="Choose">Choose a Mountain</option>
-
+    </select>
+    <select id="locs">
+        <option id="Choose">Choose your State</option>
     </select>
     <h1 id="head" style="display:none;"></h1>
     <table>
         <thead id="tableHead" style="display:none;">
             <tr>
-                <th>Name</th>
-                <th>Elevation</th>
-                <th>Effort</th>
-                <th>Description</th>
+                <th>LocationID</th>
+                <th>LocationName</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>ZipCode</th>
+                <th>Phone</th>
+                <th>Fax</th>
             </tr>
         </thead>        
         <tbody id="parkTable">
@@ -39,16 +44,34 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <script src="assets/scripts/load_mountains_data.js"></script>
+    <script src="assets/scripts/load_national_parks_data.js"></script>
 
+
+    <script>   
+                function locationDropdown(){
+                    let select = document.getElementById("locs");
+
+                    for (let i = 0; i < locationsArray.length; i++) {
+                        let option = locationsArray[i];
+                        let optionValue = document.createElement("option");
+                        optionValue.textContent = option;
+                        optionValue.id = option;
+                        select.appendChild(optionValue);
+                    }
+                }
+
+    document.getElementById("locs").addEventListener("click", function(event){
+        locationDropdown();
+    }, {once:true});
+    </script>
 
 <script>
     function typeDropdown(){
-        let obj = mountainsArray;
-        let mountains = obj.map(({name}) => ({name}));
+        var ran = false;
+
         let select = document.getElementById("types");
-            for (let i = 0; i < obj.length; i++) {
-            let option = mountains[i].name;
+            for (let i = 0; i < parkTypesArray.length; i++) {
+            let option = parkTypesArray[i];
             let optionValue = document.createElement("option");
             optionValue.textContent = option;
             optionValue.id = option;
@@ -63,17 +86,22 @@
 </script>
  
     <script>
+    document.getElementById("locs").addEventListener("change", createTable);
     document.getElementById("types").addEventListener("change", createTable);
     function createTable() {
         let body = document.getElementById("parkTable")
 
+        dropdownState = document.getElementById("locs");
+        state = dropdownState.value;
 
         dropdownType = document.getElementById("types");
         type = dropdownType.value;
 
-        var obj = mountainsArray;
+        var obj = nationalParksArray;
 
-        let mountains = obj.map(({name, elevation, effort, desc}) => ({name, elevation, effort, desc}));
+        let parkMap = obj.map(({LocationID, LocationName, Address, City, State, ZipCode, Phone, Fax}) => 
+                                ({LocationID, LocationName, Address, City, State, ZipCode, Phone, Fax}));
+
 
         
         body.innerHTML = "";
@@ -81,13 +109,13 @@
 
 
         
-        for (let i = 0; i < mountainsArray.length; i++) {
+        for (let i = 0; i < nationalParksArray.length; i++) {
             let row = document.createElement("tr")
-            let mountain = mountains[i];
+            let park = parkMap[i];
 
-            if (mountain.name === type) {
-                for (var key in mountain) {
-                var value = mountain[key]
+            if (park.State === state) {
+                for (var key in park) {
+                var value = park[key]
 
                 let cell = document.createElement("td");
                 let cellText = document.createTextNode(value)
@@ -97,7 +125,23 @@
 
                                 head = document.getElementById("head");
                 head.style.display = "";
-                head.innerHTML = mountain.name
+                head.innerHTML = park.State + " Parks";
+
+                }
+            }
+            else if (park.LocationName.includes(type)){
+                for (var key in park) {
+                var value = park[key]
+
+                let cell = document.createElement("td");
+                let cellText = document.createTextNode(value)
+
+                cell.appendChild(cellText);
+                row.appendChild(cell);
+
+                head = document.getElementById("head");
+                head.style.display = "";
+                head.innerHTML = type + " Parks";
 
                 }
             }
@@ -106,6 +150,7 @@
             body.appendChild(row);
             thead = document.getElementById("tableHead");
             thead.style.display = "";
+            dropdownState.selectedIndex = 0;
             dropdownType.selectedIndex = 0;
             head = document.getElementById("head");
             head.innerHTML
