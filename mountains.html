@@ -29,15 +29,11 @@
                 <a href="parks.html" style="text-decoration: none; color: #000000;">National Parks</a></button>
             <button class="nav-button">
                 <a href="mountains.html" style="text-decoration: none; color: #000000;">Mountains</a></button>
-            <h1>Parks</h1>
+            <h1>Mountains</h1>
             <select id="types">
-                <option id="Choose">Choose type of Park</option>
+                <option id="Choose">Choose a Mountain!</option>
 
             </select>
-            <select id="locs">
-                <option id="Choose">Choose your State</option>
-            </select>
-            <br>
             <h1 id="head" style="display:none;"></h1>
             <div style="height: 571px;
                 width: 1150px;
@@ -46,14 +42,10 @@
                 opacity: .90;">
                     <thead id="tableHead" style="display:none;">
                         <tr>
-                            <th>LocationID</th>
-                            <th>LocationName</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>State</th>
-                            <th>ZipCode</th>
-                            <th>Phone</th>
-                            <th>Fax</th>
+                            <th>Name</th>
+                            <th>Elevation</th>
+                            <th>Effort</th>
+                            <th>Description</th>
                         </tr>
                     </thead>
                     <tbody id="parkTable">
@@ -66,39 +58,20 @@
     </div>
 
 
-
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
-    <script src="assets/scripts/load_national_parks_data.js"></script>
+    <script src="assets/scripts/load_mountains_data.js"></script>
 
-
-    <script>
-        function locationDropdown() {
-            let select = document.getElementById("locs");
-
-            for (let i = 0; i < locationsArray.length; i++) {
-                let option = locationsArray[i];
-                let optionValue = document.createElement("option");
-                optionValue.textContent = option;
-                optionValue.id = option;
-                select.appendChild(optionValue);
-            }
-        }
-
-        document.getElementById("locs").addEventListener("click", function (event) {
-            locationDropdown();
-        }, { once: true });
-    </script>
 
     <script>
         function typeDropdown() {
-            var ran = false;
-
+            let obj = mountainsArray;
+            let mountains = obj.map(({ name }) => ({ name }));
             let select = document.getElementById("types");
-            for (let i = 0; i < parkTypesArray.length; i++) {
-                let option = parkTypesArray[i];
+            for (let i = 0; i < obj.length; i++) {
+                let option = mountains[i].name;
                 let optionValue = document.createElement("option");
                 optionValue.textContent = option;
                 optionValue.id = option;
@@ -113,22 +86,17 @@
     </script>
 
     <script>
-        document.getElementById("locs").addEventListener("change", createTable);
         document.getElementById("types").addEventListener("change", createTable);
         function createTable() {
             let body = document.getElementById("parkTable")
 
-            dropdownState = document.getElementById("locs");
-            state = dropdownState.value;
 
             dropdownType = document.getElementById("types");
             type = dropdownType.value;
 
-            var obj = nationalParksArray;
+            var obj = mountainsArray;
 
-            let parkMap = obj.map(({ LocationID, LocationName, Address, City, State, ZipCode, Phone, Fax }) =>
-                ({ LocationID, LocationName, Address, City, State, ZipCode, Phone, Fax }));
-
+            let mountains = obj.map(({ name, elevation, effort, desc }) => ({ name, elevation, effort, desc }));
 
 
             body.innerHTML = "";
@@ -136,29 +104,13 @@
 
 
 
-            for (let i = 0; i < nationalParksArray.length; i++) {
+            for (let i = 0; i < mountainsArray.length; i++) {
                 let row = document.createElement("tr")
-                let park = parkMap[i];
+                let mountain = mountains[i];
 
-                if (park.State === state) {
-                    for (var key in park) {
-                        var value = park[key]
-
-                        let cell = document.createElement("td");
-                        let cellText = document.createTextNode(value)
-
-                        cell.appendChild(cellText);
-                        row.appendChild(cell);
-
-                        head = document.getElementById("head");
-                        head.style.display = "";
-                        head.innerHTML = park.State + " Parks";
-
-                    }
-                }
-                else if (park.LocationName.includes(type)) {
-                    for (var key in park) {
-                        var value = park[key]
+                if (mountain.name === type) {
+                    for (var key in mountain) {
+                        var value = mountain[key]
 
                         let cell = document.createElement("td");
                         let cellText = document.createTextNode(value)
@@ -168,7 +120,7 @@
 
                         head = document.getElementById("head");
                         head.style.display = "";
-                        head.innerHTML = type + " Parks";
+                        head.innerHTML = mountain.name
 
                     }
                 }
@@ -177,7 +129,6 @@
                 body.appendChild(row);
                 thead = document.getElementById("tableHead");
                 thead.style.display = "";
-                dropdownState.selectedIndex = 0;
                 dropdownType.selectedIndex = 0;
                 head = document.getElementById("head");
                 head.innerHTML
